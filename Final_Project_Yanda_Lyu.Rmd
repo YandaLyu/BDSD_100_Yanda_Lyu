@@ -93,48 +93,18 @@ summary(aov(usa_chn_rus_age$age ~ usa_chn_rus_age$NOC))
 ```
 
 ```{r}
-male_ball = athlete %>% filter(Sex == "M") %>% filter(grepl("ball",Sport)) %>% group_by(NOC) 
-gmed = male_ball %>% filter(Medal == "Gold") %>% summarise(sum = n())  
-median(gmed$sum) 
-smed = male_ball %>% filter(Medal == "Silver") %>% summarise(sum = n())
-median(smed$sum)
-bmed = male_ball %>% filter(Medal == "Bronze") %>% summarise(sum = n())
-median(bmed$sum)
-gold = male_ball %>% filter(Medal == "Gold") %>% summarise(gold = ifelse(n()>25,ifelse(n()>50,3,2),1)) #>50，记作3；26-50，记作2；1-25，记作1
-silver = male_ball %>% filter(Medal == "Silver") %>% summarise(silver = ifelse(n()>25,ifelse(n()>50,3,2),1))
-bronze = male_ball %>% filter(Medal == "Bronze") %>% summarise(bronze = ifelse(n()>25,ifelse(n()>50,3,2),1))
-medal3 =gold %>% left_join(silver) %>% left_join(bronze)
-medal3[is.na(medal3)] = 1
-medaldf = data.frame(row.names = medal3$NOC , gold=medal3$gold,silver=medal3$silver,bronze=medal3$bronze)
-medaldf   
+import math
+import math
 
-dd=dist(medaldf)
-hc=hclust(dd)
-plot(hc,hang=-1,cex=.8 )
-```
+lin_model_data['Log_Population'] = np.log(lin_model_data['Population'])
+lin_model_data['Log_GDP'] = np.log(lin_model_data['GDP'])
+y, X = dmatrices('Medal_Won_Corrected ~ Log_GDP + Log_Population + Total_Athletes + Home_adv + GDP_per_capita', 
+                data = lin_model_data,
+                return_type = 'dataframe')
 
-```{r}
-fit1 = lm(b6$medal ~ b6$height) 
-summary(fit1)
-fit2 = lm(b6$medal ~ b6$weight)
-summary(fit2)
-fit3 = lm(b6$medal ~ b6$age)
-summary(fit3)
-fit4 = lm(b6$medal ~ b6$ath_m)
-summary(fit4)
+model = sm.OLS(y, X)
+result = model.fit()
 
-library(ggplot2)
-fit.lowess=lowess(b6$medal, b6$age)   
-fit.loess=loess(b6$age~b6$medal, data=b6)
-fit.spline=smooth.spline(b6$medal, b6$age)
-u = b6$medal
-v = b6$age
-plot(u, v ,xlab = "average medals of each year",ylab = "average age" )
-lines(u,fitted(lm(v~u)) , lty = 2) 
-lines(lowess(u,v) ,col = "blue" )
-lines(u,predict(loess(v~u)),col = "red")
-lines(fit.spline ,col = "green")
-legend("bottomright", legend=c("lm","lowess","loess","smooth.spline"), col=c("black","blue","red","green"), lty=c(2,1,1,1),lwd = 1)
-title("Medal vs Sex")
+result.summary()
 
 ```
